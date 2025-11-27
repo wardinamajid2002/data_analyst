@@ -1,0 +1,140 @@
+#scenario : employee who sell the most amount will be the employee of the month
+
+
+#create a table for product
+
+ create table product (
+
+    id INTEGER PRIMARY KEY,
+    products VARCHAR(255),
+    prices INTEGER
+ );
+
+
+#insert vale into the table
+INSERT into product(products,prices) VALUES
+('handbag', 129),
+('lotion', 45),
+('purse', 67),
+('shampoo', 56),
+('socks', 21),
+('mitten', 10)
+;
+
+
+#create employee table
+
+-- create table employee (
+
+--     id integer  PRIMARY KEY,
+--     emp_name VARCHAR (255),
+--     product_sold VARCHAR(255)
+
+-- );
+
+#fix  increment issues
+-- DROP TABLE employee;
+
+
+create table employee (
+
+    id integer  PRIMARY KEY AUTOINCREMENT,
+    emp_name TEXT,
+    product_sold TEXT
+
+);
+
+#insert value into employee table
+INSERT INTO employee(emp_name,product_sold) VALUES
+('Alex', 'handbag'),
+('Solene','lotion'),
+('Miranda','purse'),
+('Solene', 'purse'),
+('Alex', 'shampoo'),
+('Alex', 'mitten')
+;
+
+# a correction occur, Miranda actually sold lotion
+DELETE FROM employee WHERE emp_name = 'Miranda' AND product_sold = 'purse';
+
+#replace miranda product with miranda selling lotion
+#UPDATE employee SET emp_name = 'Miranda' AND product_sold = 'lotion' where id is NOT NULL;
+
+INSERT INTO employee(emp_name,product_sold) VALUES ('Miranda','lotion');
+#join table to see who sell what
+-- SELECT employee.emp_name FROM employee 
+
+-- join product ON 
+
+-- product.products = employee.product_sold;
+
+SELECT employee.emp_name,employee.product_sold,product.prices FROM employee JOIN product ON product.products = employee.product_sold;
+
+
+#find employee of the month
+SELECT employee.emp_name, count(*) as total_sold from employee GROUP BY emp_name ORDER BY total_sold DESC;
+
+
+-- scenario : a superstore has opened new branch at 2  places.they only want to hire people under 25 for 
+-- Abuela store and people between 40 to 50 for Buelo store.Sort the applicants
+
+
+create table applicants (
+
+    id INTEGER PRIMARY KEY,
+    apl_name VARCHAR(255),
+    apl_age INTEGER,
+    has_exp BOOLEAN
+ );
+
+
+#insert new values , just add
+
+INSERT INTO applicants(apl_name,apl_age,has_exp) VALUES
+('Sontoro', 19,0),
+('Fomiatos',37, 1),
+('Estrella',22,1),
+('Sorrette', 78,1),
+('Alexis', 24,1),
+('Feugor', 20,0),
+('Nate',100,0),
+('Amerew',98,1),
+('Disue',44,1),
+('Kikomilano',43,0)
+;
+
+
+CREATE TABLE stores (
+    store TEXT,
+    min_age INTEGER,
+    max_age INTEGER
+);
+INSERT INTO stores(store, min_age, max_age) VALUES
+('Abuela', 0, 24),
+('Buelo', 40, 50);
+
+
+#use join to see whos belong to which store
+
+SELECT applicants.apl_name,applicants.apl_age,applicants.has_exp,stores.store
+
+from applicants join stores on applicants.apl_age BETWEEN
+
+stores.min_age AND stores.max_age
+
+ORDER BY stores.store;
+
+
+
+#use left join to see which stores has most of it applicants has no experience to depploy mentorship programmme
+
+SELECT stores.store,
+
+ count(applicants.id) as no_exp_apl
+
+FROM stores
+
+LEFT JOIN applicants ON applicants.has_exp = 0 
+
+
+GROUP BY stores.store;
